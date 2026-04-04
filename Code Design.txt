@@ -1,5 +1,5 @@
 Goal for the code 
-Section 1:Aarnav
+Section 1:Aarnav(Data Cleaning is finished)(Will do the visualization at the end)
 Section 2:
 Section 3:
 Section 4:

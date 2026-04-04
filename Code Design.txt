@@ -4,14 +4,15 @@ Section 2:
 Section 3:
 Section 4:
 Section 5:
-Section 6:Aarnav
+Section 6:
 
-Section 1 & 6: Data Cleaning & Visualizations (same person)
+Section 1 : Data Cleaning & Visualizations(Done at the end) (same person)
 
 Clean the FastF1 lap data
 Filter out outlier laps (safety car, pit laps, in/out laps)
 Standardize compound names and race names across all tracks
-Lap time degradation curves per compound
+(Done at the end)
+Lap time degradation curves per compound (Perille)
 Pit stop time loss comparisons across tracks
 Safety car probability chart per track
 Optimal strategy output chart (stint lengths, compounds, total time)
@@ -42,9 +43,10 @@ Calculate how temperature affects degradation rate per compound
 Model wet weather compound switches (intermediate and wet tires)
 Feed weather adjusted inputs into the optimizer
 
-Section 6 & 1: MILP Optimizer
+Section 6: MILP Optimizer
 
 Build the optimization model using ML
 Takes outputs from Sections 2, 3, 4, and 5 as inputs
 Runs strategy optimization for any given track
 Outputs optimal compound sequence and stint lengths
+Graph 

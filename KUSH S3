@@ -1,0 +1,1604 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "1a4cd886-4b63-4f0e-9f27-1d785e6d3758",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: fastf1 in /opt/anaconda3/lib/python3.13/site-packages (3.8.2)\n",
+      "Requirement already satisfied: cryptography in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (44.0.1)\n",
+      "Requirement already satisfied: matplotlib<4.0.0,>=3.8.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.10.0)\n",
+      "Requirement already satisfied: numpy<3.0.0,>=1.26.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.5)\n",
+      "Requirement already satisfied: pandas<3.0.0,>=2.1.1 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.3)\n",
+      "Requirement already satisfied: platformdirs in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (4.3.7)\n",
+      "Requirement already satisfied: pydantic in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.3)\n",
+      "Requirement already satisfied: pyjwt in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.1)\n",
+      "Requirement already satisfied: python-dateutil in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.9.0.post0)\n",
+      "Requirement already satisfied: rapidfuzz in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.14.3)\n",
+      "Requirement already satisfied: requests-cache>=1.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.3.1)\n",
+      "Requirement already satisfied: requests>=2.30.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.32.3)\n",
+      "Requirement already satisfied: scipy<2.0.0,>=1.11.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.15.3)\n",
+      "Requirement already satisfied: signalrcore in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.0.2)\n",
+      "Requirement already satisfied: timple>=0.1.6 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (0.1.8)\n",
+      "Requirement already satisfied: websockets>=10.3 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (16.0)\n",
+      "Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.3.1)\n",
+      "Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (0.11.0)\n",
+      "Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (4.55.3)\n",
+      "Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.4.8)\n",
+      "Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (24.2)\n",
+      "Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (11.1.0)\n",
+      "Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (3.2.0)\n",
+      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2024.1)\n",
+      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2025.2)\n",
+      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.13/site-packages (from python-dateutil->fastf1) (1.17.0)\n",
+      "Requirement already satisfied: charset-normalizer<4,>=2 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.3.2)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.7)\n",
+      "Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2.3.0)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2025.10.5)\n",
+      "Requirement already satisfied: attrs>=21.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.3.0)\n",
+      "Requirement already satisfied: cattrs>=22.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.1.2)\n",
+      "Requirement already satisfied: url-normalize>=2.0 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (2.2.1)\n",
+      "Requirement already satisfied: cffi>=1.12 in /opt/anaconda3/lib/python3.13/site-packages (from cryptography->fastf1) (1.17.1)\n",
+      "Requirement already satisfied: pycparser in /opt/anaconda3/lib/python3.13/site-packages (from cffi>=1.12->cryptography->fastf1) (2.21)\n",
+      "Requirement already satisfied: annotated-types>=0.6.0 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (0.6.0)\n",
+      "Requirement already satisfied: pydantic-core==2.27.1 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (2.27.1)\n",
+      "Requirement already satisfied: typing-extensions>=4.12.2 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (4.12.2)\n",
+      "Requirement already satisfied: msgpack==1.1.2 in /opt/anaconda3/lib/python3.13/site-packages (from signalrcore->fastf1) (1.1.2)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install fastf1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "2602060e-fc64-4e45-b416-210cf8e6574b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: fastf1 in /opt/anaconda3/lib/python3.13/site-packages (3.8.2)\n",
+      "Requirement already satisfied: cryptography in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (44.0.1)\n",
+      "Requirement already satisfied: matplotlib<4.0.0,>=3.8.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.10.0)\n",
+      "Requirement already satisfied: numpy<3.0.0,>=1.26.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.5)\n",
+      "Requirement already satisfied: pandas<3.0.0,>=2.1.1 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.3)\n",
+      "Requirement already satisfied: platformdirs in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (4.3.7)\n",
+      "Requirement already satisfied: pydantic in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.3)\n",
+      "Requirement already satisfied: pyjwt in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.1)\n",
+      "Requirement already satisfied: python-dateutil in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.9.0.post0)\n",
+      "Requirement already satisfied: rapidfuzz in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.14.3)\n",
+      "Requirement already satisfied: requests-cache>=1.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.3.1)\n",
+      "Requirement already satisfied: requests>=2.30.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.32.3)\n",
+      "Requirement already satisfied: scipy<2.0.0,>=1.11.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.15.3)\n",
+      "Requirement already satisfied: signalrcore in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.0.2)\n",
+      "Requirement already satisfied: timple>=0.1.6 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (0.1.8)\n",
+      "Requirement already satisfied: websockets>=10.3 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (16.0)\n",
+      "Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.3.1)\n",
+      "Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (0.11.0)\n",
+      "Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (4.55.3)\n",
+      "Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.4.8)\n",
+      "Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (24.2)\n",
+      "Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (11.1.0)\n",
+      "Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (3.2.0)\n",
+      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2024.1)\n",
+      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2025.2)\n",
+      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.13/site-packages (from python-dateutil->fastf1) (1.17.0)\n",
+      "Requirement already satisfied: charset-normalizer<4,>=2 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.3.2)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.7)\n",
+      "Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2.3.0)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2025.10.5)\n",
+      "Requirement already satisfied: attrs>=21.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.3.0)\n",
+      "Requirement already satisfied: cattrs>=22.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.1.2)\n",
+      "Requirement already satisfied: url-normalize>=2.0 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (2.2.1)\n",
+      "Requirement already satisfied: cffi>=1.12 in /opt/anaconda3/lib/python3.13/site-packages (from cryptography->fastf1) (1.17.1)\n",
+      "Requirement already satisfied: pycparser in /opt/anaconda3/lib/python3.13/site-packages (from cffi>=1.12->cryptography->fastf1) (2.21)\n",
+      "Requirement already satisfied: annotated-types>=0.6.0 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (0.6.0)\n",
+      "Requirement already satisfied: pydantic-core==2.27.1 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (2.27.1)\n",
+      "Requirement already satisfied: typing-extensions>=4.12.2 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (4.12.2)\n",
+      "Requirement already satisfied: msgpack==1.1.2 in /opt/anaconda3/lib/python3.13/site-packages (from signalrcore->fastf1) (1.1.2)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install fastf1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "ad28144a-eff6-429e-8b84-f036600e4785",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: fastf1 in /opt/anaconda3/lib/python3.13/site-packages (3.8.2)\n",
+      "Requirement already satisfied: cryptography in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (44.0.1)\n",
+      "Requirement already satisfied: matplotlib<4.0.0,>=3.8.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.10.0)\n",
+      "Requirement already satisfied: numpy<3.0.0,>=1.26.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.5)\n",
+      "Requirement already satisfied: pandas<3.0.0,>=2.1.1 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.3)\n",
+      "Requirement already satisfied: platformdirs in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (4.3.7)\n",
+      "Requirement already satisfied: pydantic in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.3)\n",
+      "Requirement already satisfied: pyjwt in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.1)\n",
+      "Requirement already satisfied: python-dateutil in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.9.0.post0)\n",
+      "Requirement already satisfied: rapidfuzz in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.14.3)\n",
+      "Requirement already satisfied: requests-cache>=1.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.3.1)\n",
+      "Requirement already satisfied: requests>=2.30.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.32.3)\n",
+      "Requirement already satisfied: scipy<2.0.0,>=1.11.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.15.3)\n",
+      "Requirement already satisfied: signalrcore in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.0.2)\n",
+      "Requirement already satisfied: timple>=0.1.6 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (0.1.8)\n",
+      "Requirement already satisfied: websockets>=10.3 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (16.0)\n",
+      "Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.3.1)\n",
+      "Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (0.11.0)\n",
+      "Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (4.55.3)\n",
+      "Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.4.8)\n",
+      "Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (24.2)\n",
+      "Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (11.1.0)\n",
+      "Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (3.2.0)\n",
+      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2024.1)\n",
+      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2025.2)\n",
+      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.13/site-packages (from python-dateutil->fastf1) (1.17.0)\n",
+      "Requirement already satisfied: charset-normalizer<4,>=2 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.3.2)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.7)\n",
+      "Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2.3.0)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2025.10.5)\n",
+      "Requirement already satisfied: attrs>=21.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.3.0)\n",
+      "Requirement already satisfied: cattrs>=22.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.1.2)\n",
+      "Requirement already satisfied: url-normalize>=2.0 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (2.2.1)\n",
+      "Requirement already satisfied: cffi>=1.12 in /opt/anaconda3/lib/python3.13/site-packages (from cryptography->fastf1) (1.17.1)\n",
+      "Requirement already satisfied: pycparser in /opt/anaconda3/lib/python3.13/site-packages (from cffi>=1.12->cryptography->fastf1) (2.21)\n",
+      "Requirement already satisfied: annotated-types>=0.6.0 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (0.6.0)\n",
+      "Requirement already satisfied: pydantic-core==2.27.1 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (2.27.1)\n",
+      "Requirement already satisfied: typing-extensions>=4.12.2 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (4.12.2)\n",
+      "Requirement already satisfied: msgpack==1.1.2 in /opt/anaconda3/lib/python3.13/site-packages (from signalrcore->fastf1) (1.1.2)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install fastf1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "e9ea8ba9-2be6-47d7-93fb-3d0ba04df758",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: fastf1 in /opt/anaconda3/lib/python3.13/site-packages (3.8.2)\n",
+      "Requirement already satisfied: cryptography in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (44.0.1)\n",
+      "Requirement already satisfied: matplotlib<4.0.0,>=3.8.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.10.0)\n",
+      "Requirement already satisfied: numpy<3.0.0,>=1.26.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.5)\n",
+      "Requirement already satisfied: pandas<3.0.0,>=2.1.1 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.3)\n",
+      "Requirement already satisfied: platformdirs in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (4.3.7)\n",
+      "Requirement already satisfied: pydantic in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.3)\n",
+      "Requirement already satisfied: pyjwt in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.1)\n",
+      "Requirement already satisfied: python-dateutil in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.9.0.post0)\n",
+      "Requirement already satisfied: rapidfuzz in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.14.3)\n",
+      "Requirement already satisfied: requests-cache>=1.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.3.1)\n",
+      "Requirement already satisfied: requests>=2.30.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.32.3)\n",
+      "Requirement already satisfied: scipy<2.0.0,>=1.11.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.15.3)\n",
+      "Requirement already satisfied: signalrcore in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.0.2)\n",
+      "Requirement already satisfied: timple>=0.1.6 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (0.1.8)\n",
+      "Requirement already satisfied: websockets>=10.3 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (16.0)\n",
+      "Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.3.1)\n",
+      "Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (0.11.0)\n",
+      "Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (4.55.3)\n",
+      "Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.4.8)\n",
+      "Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (24.2)\n",
+      "Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (11.1.0)\n",
+      "Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (3.2.0)\n",
+      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2024.1)\n",
+      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2025.2)\n",
+      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.13/site-packages (from python-dateutil->fastf1) (1.17.0)\n",
+      "Requirement already satisfied: charset-normalizer<4,>=2 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.3.2)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.7)\n",
+      "Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2.3.0)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2025.10.5)\n",
+      "Requirement already satisfied: attrs>=21.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.3.0)\n",
+      "Requirement already satisfied: cattrs>=22.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.1.2)\n",
+      "Requirement already satisfied: url-normalize>=2.0 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (2.2.1)\n",
+      "Requirement already satisfied: cffi>=1.12 in /opt/anaconda3/lib/python3.13/site-packages (from cryptography->fastf1) (1.17.1)\n",
+      "Requirement already satisfied: pycparser in /opt/anaconda3/lib/python3.13/site-packages (from cffi>=1.12->cryptography->fastf1) (2.21)\n",
+      "Requirement already satisfied: annotated-types>=0.6.0 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (0.6.0)\n",
+      "Requirement already satisfied: pydantic-core==2.27.1 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (2.27.1)\n",
+      "Requirement already satisfied: typing-extensions>=4.12.2 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (4.12.2)\n",
+      "Requirement already satisfied: msgpack==1.1.2 in /opt/anaconda3/lib/python3.13/site-packages (from signalrcore->fastf1) (1.1.2)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install fastf1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "12360a91-1824-4d1b-8e99-fa375741ae86",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: fastf1 in /opt/anaconda3/lib/python3.13/site-packages (3.8.2)\n",
+      "Requirement already satisfied: cryptography in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (44.0.1)\n",
+      "Requirement already satisfied: matplotlib<4.0.0,>=3.8.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.10.0)\n",
+      "Requirement already satisfied: numpy<3.0.0,>=1.26.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.5)\n",
+      "Requirement already satisfied: pandas<3.0.0,>=2.1.1 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.3)\n",
+      "Requirement already satisfied: platformdirs in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (4.3.7)\n",
+      "Requirement already satisfied: pydantic in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.3)\n",
+      "Requirement already satisfied: pyjwt in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.1)\n",
+      "Requirement already satisfied: python-dateutil in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.9.0.post0)\n",
+      "Requirement already satisfied: rapidfuzz in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.14.3)\n",
+      "Requirement already satisfied: requests-cache>=1.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.3.1)\n",
+      "Requirement already satisfied: requests>=2.30.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.32.3)\n",
+      "Requirement already satisfied: scipy<2.0.0,>=1.11.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.15.3)\n",
+      "Requirement already satisfied: signalrcore in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.0.2)\n",
+      "Requirement already satisfied: timple>=0.1.6 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (0.1.8)\n",
+      "Requirement already satisfied: websockets>=10.3 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (16.0)\n",
+      "Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.3.1)\n",
+      "Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (0.11.0)\n",
+      "Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (4.55.3)\n",
+      "Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.4.8)\n",
+      "Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (24.2)\n",
+      "Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (11.1.0)\n",
+      "Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (3.2.0)\n",
+      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2024.1)\n",
+      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2025.2)\n",
+      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.13/site-packages (from python-dateutil->fastf1) (1.17.0)\n",
+      "Requirement already satisfied: charset-normalizer<4,>=2 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.3.2)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.7)\n",
+      "Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2.3.0)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2025.10.5)\n",
+      "Requirement already satisfied: attrs>=21.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.3.0)\n",
+      "Requirement already satisfied: cattrs>=22.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.1.2)\n",
+      "Requirement already satisfied: url-normalize>=2.0 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (2.2.1)\n",
+      "Requirement already satisfied: cffi>=1.12 in /opt/anaconda3/lib/python3.13/site-packages (from cryptography->fastf1) (1.17.1)\n",
+      "Requirement already satisfied: pycparser in /opt/anaconda3/lib/python3.13/site-packages (from cffi>=1.12->cryptography->fastf1) (2.21)\n",
+      "Requirement already satisfied: annotated-types>=0.6.0 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (0.6.0)\n",
+      "Requirement already satisfied: pydantic-core==2.27.1 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (2.27.1)\n",
+      "Requirement already satisfied: typing-extensions>=4.12.2 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (4.12.2)\n",
+      "Requirement already satisfied: msgpack==1.1.2 in /opt/anaconda3/lib/python3.13/site-packages (from signalrcore->fastf1) (1.1.2)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install fastf1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "755e38f7-3628-4f9a-89e7-c304fe7fb1cc",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: fastf1 in /opt/anaconda3/lib/python3.13/site-packages (3.8.2)\n",
+      "Requirement already satisfied: cryptography in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (44.0.1)\n",
+      "Requirement already satisfied: matplotlib<4.0.0,>=3.8.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.10.0)\n",
+      "Requirement already satisfied: numpy<3.0.0,>=1.26.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.5)\n",
+      "Requirement already satisfied: pandas<3.0.0,>=2.1.1 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.2.3)\n",
+      "Requirement already satisfied: platformdirs in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (4.3.7)\n",
+      "Requirement already satisfied: pydantic in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.3)\n",
+      "Requirement already satisfied: pyjwt in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.10.1)\n",
+      "Requirement already satisfied: python-dateutil in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.9.0.post0)\n",
+      "Requirement already satisfied: rapidfuzz in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (3.14.3)\n",
+      "Requirement already satisfied: requests-cache>=1.0.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.3.1)\n",
+      "Requirement already satisfied: requests>=2.30.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (2.32.3)\n",
+      "Requirement already satisfied: scipy<2.0.0,>=1.11.0 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.15.3)\n",
+      "Requirement already satisfied: signalrcore in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (1.0.2)\n",
+      "Requirement already satisfied: timple>=0.1.6 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (0.1.8)\n",
+      "Requirement already satisfied: websockets>=10.3 in /opt/anaconda3/lib/python3.13/site-packages (from fastf1) (16.0)\n",
+      "Requirement already satisfied: contourpy>=1.0.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.3.1)\n",
+      "Requirement already satisfied: cycler>=0.10 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (0.11.0)\n",
+      "Requirement already satisfied: fonttools>=4.22.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (4.55.3)\n",
+      "Requirement already satisfied: kiwisolver>=1.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (1.4.8)\n",
+      "Requirement already satisfied: packaging>=20.0 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (24.2)\n",
+      "Requirement already satisfied: pillow>=8 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (11.1.0)\n",
+      "Requirement already satisfied: pyparsing>=2.3.1 in /opt/anaconda3/lib/python3.13/site-packages (from matplotlib<4.0.0,>=3.8.0->fastf1) (3.2.0)\n",
+      "Requirement already satisfied: pytz>=2020.1 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2024.1)\n",
+      "Requirement already satisfied: tzdata>=2022.7 in /opt/anaconda3/lib/python3.13/site-packages (from pandas<3.0.0,>=2.1.1->fastf1) (2025.2)\n",
+      "Requirement already satisfied: six>=1.5 in /opt/anaconda3/lib/python3.13/site-packages (from python-dateutil->fastf1) (1.17.0)\n",
+      "Requirement already satisfied: charset-normalizer<4,>=2 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.3.2)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (3.7)\n",
+      "Requirement already satisfied: urllib3<3,>=1.21.1 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2.3.0)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in /opt/anaconda3/lib/python3.13/site-packages (from requests>=2.30.0->fastf1) (2025.10.5)\n",
+      "Requirement already satisfied: attrs>=21.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.3.0)\n",
+      "Requirement already satisfied: cattrs>=22.2 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (24.1.2)\n",
+      "Requirement already satisfied: url-normalize>=2.0 in /opt/anaconda3/lib/python3.13/site-packages (from requests-cache>=1.0.0->fastf1) (2.2.1)\n",
+      "Requirement already satisfied: cffi>=1.12 in /opt/anaconda3/lib/python3.13/site-packages (from cryptography->fastf1) (1.17.1)\n",
+      "Requirement already satisfied: pycparser in /opt/anaconda3/lib/python3.13/site-packages (from cffi>=1.12->cryptography->fastf1) (2.21)\n",
+      "Requirement already satisfied: annotated-types>=0.6.0 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (0.6.0)\n",
+      "Requirement already satisfied: pydantic-core==2.27.1 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (2.27.1)\n",
+      "Requirement already satisfied: typing-extensions>=4.12.2 in /opt/anaconda3/lib/python3.13/site-packages (from pydantic->fastf1) (4.12.2)\n",
+      "Requirement already satisfied: msgpack==1.1.2 in /opt/anaconda3/lib/python3.13/site-packages (from signalrcore->fastf1) (1.1.2)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install fastf1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "02919b41-8dd8-4def-a852-c4ced07406bb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import fastf1\n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import sqlite3\n",
+    "import matplotlib.pyplot as plt\n",
+    "import os\n",
+    "from tqdm import tqdm\n",
+    "from scipy.stats import linregress"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "f334e6bc-0d91-4fd3-8226-7faaa415c296",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Cache ready.\n"
+     ]
+    }
+   ],
+   "source": [
+    "os.makedirs(\"f1_cache\", exist_ok=True)\n",
+    "fastf1.Cache.enable_cache(\"f1_cache\")\n",
+    "print(\"Cache ready.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "924ad2de-f380-4eeb-99e0-3bb5981b43e8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(27557, 9)\n",
+      "  Driver  LapNumber Compound  TyreLife       LapTime  Stint   LapStartTime  \\\n",
+      "0    NOR        1.0   MEDIUM       1.0  100424000000    1.0  3421006000000   \n",
+      "1    NOR        2.0   MEDIUM       2.0   98480000000    1.0  3521675000000   \n",
+      "2    NOR        3.0   MEDIUM       3.0   98406000000    1.0  3620155000000   \n",
+      "3    NOR        4.0   MEDIUM       4.0   98446000000    1.0  3718561000000   \n",
+      "4    NOR        5.0   MEDIUM       5.0   97938000000    1.0  3817007000000   \n",
+      "\n",
+      "   Year                Race  \n",
+      "0  2024  Pre-Season Testing  \n",
+      "1  2024  Pre-Season Testing  \n",
+      "2  2024  Pre-Season Testing  \n",
+      "3  2024  Pre-Season Testing  \n",
+      "4  2024  Pre-Season Testing  \n",
+      "['Driver', 'LapNumber', 'Compound', 'TyreLife', 'LapTime', 'Stint', 'LapStartTime', 'Year', 'Race']\n"
+     ]
+    }
+   ],
+   "source": [
+    "conn = sqlite3.connect(\"f1_data.db\")\n",
+    "laps_2024 = pd.read_sql(\"SELECT * FROM laps_2024\", conn)\n",
+    "conn.close()\n",
+    "\n",
+    "print(laps_2024.shape)\n",
+    "print(laps_2024.head())\n",
+    "print(laps_2024.columns.tolist())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "0cc60dcd-5bf6-4c53-9d0a-9f85e3b94cf4",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(25407, 9)\n",
+      "     Driver  LapNumber Compound  TyreLife  LapTime  Stint   LapStartTime  \\\n",
+      "1176    VER        1.0     SOFT       4.0   97.284    1.0  3599911000000   \n",
+      "1177    VER        2.0     SOFT       5.0   96.296    1.0  3697489000000   \n",
+      "1178    VER        3.0     SOFT       6.0   96.753    1.0  3793785000000   \n",
+      "1179    VER        4.0     SOFT       7.0   96.647    1.0  3890538000000   \n",
+      "1180    VER        5.0     SOFT       8.0   97.173    1.0  3987185000000   \n",
+      "\n",
+      "      Year                Race  \n",
+      "1176  2024  Bahrain Grand Prix  \n",
+      "1177  2024  Bahrain Grand Prix  \n",
+      "1178  2024  Bahrain Grand Prix  \n",
+      "1179  2024  Bahrain Grand Prix  \n",
+      "1180  2024  Bahrain Grand Prix  \n"
+     ]
+    }
+   ],
+   "source": [
+    "required_cols = ['Race', 'LapTime', 'TyreLife', 'LapNumber', 'Compound', 'Driver']\n",
+    "missing_cols = [c for c in required_cols if c not in laps_2024.columns]\n",
+    "\n",
+    "if missing_cols:\n",
+    "    raise ValueError(f\"Missing required columns in laps_2024: {missing_cols}\")\n",
+    "\n",
+    "laps_2024['LapTime'] = pd.to_numeric(laps_2024['LapTime'], errors='coerce')\n",
+    "laps_2024['TyreLife'] = pd.to_numeric(laps_2024['TyreLife'], errors='coerce')\n",
+    "laps_2024['LapNumber'] = pd.to_numeric(laps_2024['LapNumber'], errors='coerce')\n",
+    "\n",
+    "if laps_2024['LapTime'].dropna().max() > 1e9:\n",
+    "    laps_2024['LapTime'] = laps_2024['LapTime'] / 1e9\n",
+    "\n",
+    "laps_2024 = laps_2024[laps_2024['Race'] != 'Pre-Season Testing']\n",
+    "laps_2024 = laps_2024[laps_2024['LapTime'] < 200]\n",
+    "laps_2024 = laps_2024[laps_2024['TyreLife'] > 1]\n",
+    "laps_2024 = laps_2024.dropna(subset=['Race', 'LapTime', 'TyreLife', 'LapNumber', 'Compound', 'Driver'])\n",
+    "\n",
+    "laps_2024['Compound'] = laps_2024['Compound'].astype(str).str.upper()\n",
+    "\n",
+    "print(laps_2024.shape)\n",
+    "print(laps_2024.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "42c93e51-486c-4598-940a-ddfbe701b131",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                    Race  LapNumber  LapTime  CorrectedLapTime\n",
+      "1176  Bahrain Grand Prix        1.0   97.284         97.341895\n",
+      "1177  Bahrain Grand Prix        2.0   96.296         96.411789\n",
+      "1178  Bahrain Grand Prix        3.0   96.753         96.926684\n",
+      "1179  Bahrain Grand Prix        4.0   96.647         96.878579\n",
+      "1180  Bahrain Grand Prix        5.0   97.173         97.462474\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/var/folders/08/0zqwx7h12f957n0zgtwd1h9m0000gn/T/ipykernel_42011/585848213.py:15: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n",
+      "  laps_2024 = laps_2024.groupby('Race', group_keys=False).apply(apply_fuel_correction)\n"
+     ]
+    }
+   ],
+   "source": [
+    "def apply_fuel_correction(race_group):\n",
+    "    race_group = race_group.copy()\n",
+    "    total_laps = race_group['LapNumber'].max()\n",
+    "\n",
+    "    if pd.isna(total_laps) or total_laps <= 0:\n",
+    "        race_group['CorrectedLapTime'] = race_group['LapTime']\n",
+    "        return race_group\n",
+    "\n",
+    "    fuel_penalty_per_lap = 0.03 * (110 / total_laps)\n",
+    "    race_group['CorrectedLapTime'] = (\n",
+    "        race_group['LapTime'] + (race_group['LapNumber'] * fuel_penalty_per_lap)\n",
+    "    )\n",
+    "    return race_group\n",
+    "\n",
+    "laps_2024 = laps_2024.groupby('Race', group_keys=False).apply(apply_fuel_correction)\n",
+    "\n",
+    "print(laps_2024[['Race', 'LapNumber', 'LapTime', 'CorrectedLapTime']].head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "aa6f6e36-a89e-46d8-8f60-ee0b720bd59d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(66, 5)\n",
+      "                    Race Compound  Baseline_Time  True_Deg_Rate  \\\n",
+      "0   Abu Dhabi Grand Prix     HARD      91.214713       0.030064   \n",
+      "1   Abu Dhabi Grand Prix   MEDIUM      97.303422      -0.369345   \n",
+      "2   Abu Dhabi Grand Prix     SOFT      92.812206       0.012817   \n",
+      "3  Australian Grand Prix     HARD      83.102380       0.216543   \n",
+      "4  Australian Grand Prix   MEDIUM      83.272411       0.288513   \n",
+      "\n",
+      "   Optimal_Stint_Length  \n",
+      "0                  38.0  \n",
+      "1                  55.0  \n",
+      "2                  55.0  \n",
+      "3                  14.0  \n",
+      "4                  12.0  \n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/var/folders/08/0zqwx7h12f957n0zgtwd1h9m0000gn/T/ipykernel_42011/405722497.py:20: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n",
+      "  .apply(calculate_stats)\n"
+     ]
+    }
+   ],
+   "source": [
+    "def calculate_stats(group):\n",
+    "    group = group.dropna(subset=['TyreLife', 'CorrectedLapTime'])\n",
+    "\n",
+    "    if len(group) < 10:\n",
+    "        return None\n",
+    "\n",
+    "    slope, intercept, r, p, se = linregress(group['TyreLife'], group['CorrectedLapTime'])\n",
+    "\n",
+    "    pit_cost = 22.0\n",
+    "    opt_stint = np.sqrt((2 * pit_cost) / slope) if slope > 0 else 55\n",
+    "\n",
+    "    return pd.Series({\n",
+    "        'Baseline_Time': intercept,\n",
+    "        'True_Deg_Rate': slope,\n",
+    "        'Optimal_Stint_Length': int(round(min(opt_stint, 55)))\n",
+    "    })\n",
+    "\n",
+    "deg_stats = (\n",
+    "    laps_2024.groupby(['Race', 'Compound'])\n",
+    "    .apply(calculate_stats)\n",
+    "    .reset_index()\n",
+    "    .dropna()\n",
+    ")\n",
+    "\n",
+    "print(deg_stats.shape)\n",
+    "print(deg_stats.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "67447697-376c-432c-a64e-76b30f57148e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Saved degradation_stats to database.\n"
+     ]
+    }
+   ],
+   "source": [
+    "conn = sqlite3.connect(\"f1_data.db\")\n",
+    "deg_stats.to_sql(\"degradation_stats\", conn, if_exists=\"replace\", index=False)\n",
+    "conn.close()\n",
+    "\n",
+    "print(\"Saved degradation_stats to database.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "a18d394d-e5fe-4a10-971f-7b97e99c9be6",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                    EventName        EventFormat\n",
+      "0          Pre-Season Testing            testing\n",
+      "1          Bahrain Grand Prix       conventional\n",
+      "2    Saudi Arabian Grand Prix       conventional\n",
+      "3       Australian Grand Prix       conventional\n",
+      "4         Japanese Grand Prix       conventional\n",
+      "5          Chinese Grand Prix  sprint_qualifying\n",
+      "6            Miami Grand Prix  sprint_qualifying\n",
+      "7   Emilia Romagna Grand Prix       conventional\n",
+      "8           Monaco Grand Prix       conventional\n",
+      "9         Canadian Grand Prix       conventional\n",
+      "10         Spanish Grand Prix       conventional\n",
+      "11        Austrian Grand Prix  sprint_qualifying\n",
+      "12         British Grand Prix       conventional\n",
+      "13       Hungarian Grand Prix       conventional\n",
+      "14         Belgian Grand Prix       conventional\n",
+      "15           Dutch Grand Prix       conventional\n",
+      "16         Italian Grand Prix       conventional\n",
+      "17      Azerbaijan Grand Prix       conventional\n",
+      "18       Singapore Grand Prix       conventional\n",
+      "19   United States Grand Prix  sprint_qualifying\n",
+      "20     Mexico City Grand Prix       conventional\n",
+      "21       São Paulo Grand Prix  sprint_qualifying\n",
+      "22       Las Vegas Grand Prix       conventional\n",
+      "23           Qatar Grand Prix  sprint_qualifying\n",
+      "24       Abu Dhabi Grand Prix       conventional\n"
+     ]
+    }
+   ],
+   "source": [
+    "schedule = fastf1.get_event_schedule(2024)\n",
+    "print(schedule[['EventName', 'EventFormat']].head(30))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "a19f61ad-a2fe-454d-a733-72c71f739b5c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['Bahrain Grand Prix', 'Saudi Arabian Grand Prix', 'Australian Grand Prix', 'Japanese Grand Prix', 'Emilia Romagna Grand Prix', 'Monaco Grand Prix', 'Canadian Grand Prix', 'Spanish Grand Prix', 'British Grand Prix', 'Hungarian Grand Prix', 'Belgian Grand Prix', 'Dutch Grand Prix', 'Italian Grand Prix', 'Azerbaijan Grand Prix', 'Singapore Grand Prix', 'Mexico City Grand Prix', 'Las Vegas Grand Prix', 'Abu Dhabi Grand Prix']\n",
+      "Number of races: 18\n"
+     ]
+    }
+   ],
+   "source": [
+    "races = schedule[schedule['EventFormat'] == 'conventional']['EventName'].tolist()\n",
+    "print(races)\n",
+    "print(\"Number of races:\", len(races))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "6e6a687f-2652-4a81-b5ef-884ef0544741",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "core           INFO \tLoading data for Bahrain Grand Prix - Race [v3.8.2], ?it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['1', '11', '55', '16', '63', '4', '44', '81', '14', '18', '24', '20', '3', '22', '23', '27', '31', '10', '77', '2']\n",
+      "core           INFO \tLoading data for Saudi Arabian Grand Prix - Race [v3.8.2]s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['1', '11', '16', '81', '14', '63', '38', '4', '44', '27', '23', '20', '31', '2', '22', '3', '77', '24', '18', '10']\n",
+      "core           INFO \tLoading data for Australian Grand Prix - Race [v3.8.2]it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 19 drivers: ['55', '16', '4', '81', '11', '18', '22', '14', '27', '20', '23', '3', '10', '77', '24', '31', '63', '44', '1']\n",
+      "core           INFO \tLoading data for Japanese Grand Prix - Race [v3.8.2]65it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['1', '11', '55', '16', '4', '14', '63', '81', '44', '22', '27', '18', '20', '77', '31', '10', '2', '24', '3', '23']\n",
+      "core           INFO \tLoading data for Emilia Romagna Grand Prix - Race [v3.8.2]]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['1', '4', '16', '81', '55', '44', '63', '11', '18', '22', '27', '20', '3', '31', '24', '10', '2', '77', '14', '23']\n",
+      "core           INFO \tLoading data for Monaco Grand Prix - Race [v3.8.2]2.77it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['16', '81', '55', '4', '63', '1', '44', '22', '23', '10', '14', '3', '77', '18', '2', '24', '31', '11', '27', '20']\n",
+      "core           INFO \tLoading data for Canadian Grand Prix - Race [v3.8.2]73it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['1', '4', '63', '44', '81', '14', '18', '3', '10', '31', '27', '20', '77', '22', '24', '55', '23', '11', '16', '2']\n",
+      "core           INFO \tLoading data for Spanish Grand Prix - Race [v3.8.2].55it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "core        WARNING \tDriver 1 completed the race distance 00:00.015000 before the recorded end of the session.\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['1', '4', '44', '63', '16', '55', '81', '11', '10', '31', '27', '14', '24', '18', '3', '77', '20', '23', '22', '2']\n",
+      "core           INFO \tLoading data for British Grand Prix - Race [v3.8.2].56it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['44', '1', '4', '81', '55', '27', '18', '14', '23', '22', '2', '20', '3', '16', '77', '31', '11', '24', '63', '10']\n",
+      "core           INFO \tLoading data for Hungarian Grand Prix - Race [v3.8.2]7it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['81', '4', '44', '16', '1', '55', '11', '63', '22', '18', '14', '3', '27', '23', '20', '77', '2', '31', '24', '10']\n",
+      "core           INFO \tLoading data for Belgian Grand Prix - Race [v3.8.2].65it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "core        WARNING \tFixed incorrect tyre stint information for driver '14'\n",
+      "core        WARNING \tFixed incorrect tyre stint information for driver '3'\n",
+      "core        WARNING \tFixed incorrect tyre stint information for driver '18'\n",
+      "core        WARNING \tFixed incorrect tyre stint information for driver '22'\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['44', '81', '16', '1', '4', '55', '11', '14', '31', '3', '18', '23', '10', '20', '77', '22', '2', '27', '24', '63']\n",
+      "core           INFO \tLoading data for Dutch Grand Prix - Race [v3.8.2] 2.77it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['4', '1', '16', '81', '55', '11', '63', '44', '10', '14', '27', '3', '18', '23', '31', '2', '22', '20', '77', '24']\n",
+      "core           INFO \tLoading data for Italian Grand Prix - Race [v3.8.2].69it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['16', '81', '4', '55', '44', '1', '63', '11', '23', '20', '14', '43', '3', '31', '10', '77', '27', '24', '18', '22']\n",
+      "core           INFO \tLoading data for Azerbaijan Grand Prix - Race [v3.8.2]it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['81', '16', '63', '4', '1', '14', '23', '43', '44', '50', '27', '10', '3', '24', '31', '77', '11', '55', '18', '22']\n",
+      "core           INFO \tLoading data for Singapore Grand Prix - Race [v3.8.2]7it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['4', '1', '81', '63', '16', '44', '55', '14', '27', '11', '43', '22', '31', '18', '24', '77', '10', '3', '20', '23']\n",
+      "core           INFO \tLoading data for Mexico City Grand Prix - Race [v3.8.2]t/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['55', '4', '16', '44', '63', '1', '20', '81', '27', '10', '18', '43', '31', '77', '24', '30', '11', '14', '23', '22']\n",
+      "core           INFO \tLoading data for Las Vegas Grand Prix - Race [v3.8.2]4it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "core        WARNING \tDriver 63: Lap timing integrity check failed for 2 lap(s)\n",
+      "core        WARNING \tDriver 44: Lap timing integrity check failed for 1 lap(s)\n",
+      "core        WARNING \tDriver 55: Lap timing integrity check failed for 1 lap(s)\n",
+      "core        WARNING \tDriver 16: Lap timing integrity check failed for 2 lap(s)\n",
+      "core        WARNING \tDriver  1: Lap timing integrity check failed for 1 lap(s)\n",
+      "core        WARNING \tDriver  4: Lap timing integrity check failed for 1 lap(s)\n",
+      "core        WARNING \tDriver 81: Lap timing integrity check failed for 1 lap(s)\n",
+      "core        WARNING \tDriver 30: Lap timing integrity check failed for 2 lap(s)\n",
+      "core        WARNING \tDriver 77: Lap timing integrity check failed for 2 lap(s)\n",
+      "core        WARNING \tDriver 63 completed the race distance 00:00.427000 before the recorded end of the session.\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['63', '44', '55', '16', '1', '4', '81', '27', '22', '11', '14', '20', '24', '43', '18', '30', '31', '77', '23', '10']\n",
+      "core           INFO \tLoading data for Abu Dhabi Grand Prix - Race [v3.8.2]7it/s]\n",
+      "req            INFO \tUsing cached data for session_info\n",
+      "req            INFO \tUsing cached data for driver_info\n",
+      "req            INFO \tUsing cached data for session_status_data\n",
+      "req            INFO \tUsing cached data for lap_count\n",
+      "req            INFO \tUsing cached data for track_status_data\n",
+      "req            INFO \tUsing cached data for _extended_timing_data\n",
+      "req            INFO \tUsing cached data for timing_app_data\n",
+      "core           INFO \tProcessing timing data...\n",
+      "req            INFO \tUsing cached data for race_control_messages\n",
+      "core           INFO \tFinished loading data for 20 drivers: ['4', '55', '16', '44', '63', '1', '10', '27', '14', '81', '23', '22', '24', '18', '61', '20', '30', '77', '43', '11']\n",
+      "Loading Pit Data: 100%|█████████████████████████| 18/18 [00:06<00:00,  2.70it/s]\n"
+     ]
+    }
+   ],
+   "source": [
+    "all_pit_data = []\n",
+    "\n",
+    "for race_name in tqdm(races, desc=\"Loading Pit Data\"):\n",
+    "    try:\n",
+    "        session = fastf1.get_session(2024, race_name, 'R')\n",
+    "        session.load(telemetry=False, weather=False)\n",
+    "\n",
+    "        laps_df = pd.DataFrame(session.laps)\n",
+    "        if laps_df.empty:\n",
+    "            continue\n",
+    "\n",
+    "        laps_df['Race'] = race_name\n",
+    "        laps_df['Compound'] = laps_df['Compound'].astype(str).str.upper()\n",
+    "        laps_df['LapTimeSec'] = laps_df['LapTime'].dt.total_seconds()\n",
+    "\n",
+    "        pit_laps = laps_df[\n",
+    "            laps_df['PitInTime'].notna() & laps_df['PitOutTime'].notna()\n",
+    "        ].copy()\n",
+    "\n",
+    "        if pit_laps.empty:\n",
+    "            continue\n",
+    "\n",
+    "        pit_laps['PitInSec'] = pit_laps['PitInTime'].dt.total_seconds()\n",
+    "        pit_laps['PitOutSec'] = pit_laps['PitOutTime'].dt.total_seconds()\n",
+    "        pit_laps['PitStopDuration'] = pit_laps['PitOutSec'] - pit_laps['PitInSec']\n",
+    "\n",
+    "        pit_laps = pit_laps[\n",
+    "            (pit_laps['PitStopDuration'] >= 1.5) &\n",
+    "            (pit_laps['PitStopDuration'] <= 120)\n",
+    "        ]\n",
+    "\n",
+    "        if pit_laps.empty:\n",
+    "            continue\n",
+    "\n",
+    "        for driver in pit_laps['Driver'].dropna().unique():\n",
+    "            driver_laps = laps_df[laps_df['Driver'] == driver].dropna(subset=['LapTimeSec'])\n",
+    "\n",
+    "            if len(driver_laps) < 5:\n",
+    "                continue\n",
+    "\n",
+    "            q10 = driver_laps['LapTimeSec'].quantile(0.10)\n",
+    "            q60 = driver_laps['LapTimeSec'].quantile(0.60)\n",
+    "\n",
+    "            clean_laps = driver_laps[\n",
+    "                driver_laps['LapTimeSec'].between(q10, q60)\n",
+    "            ]\n",
+    "\n",
+    "            if clean_laps.empty:\n",
+    "                continue\n",
+    "\n",
+    "            median_clean = clean_laps['LapTimeSec'].median()\n",
+    "            driver_pits = pit_laps[pit_laps['Driver'] == driver].copy()\n",
+    "            driver_pits['TimeLostVsMedian'] = driver_pits['LapTimeSec'] - median_clean\n",
+    "\n",
+    "            all_pit_data.append(\n",
+    "                driver_pits[['Race', 'Driver', 'LapNumber', 'Compound',\n",
+    "                             'PitStopDuration', 'TimeLostVsMedian', 'LapTimeSec']]\n",
+    "            )\n",
+    "\n",
+    "    except Exception as e:\n",
+    "        print(f\"Skipping {race_name}: {e}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "23d038bc-aa59-4259-a46a-3d784fa914f4",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(0, 7)\n",
+      "Empty DataFrame\n",
+      "Columns: [Race, Driver, LapNumber, Compound, PitStopDuration, TimeLostVsMedian, LapTimeSec]\n",
+      "Index: []\n"
+     ]
+    }
+   ],
+   "source": [
+    "if all_pit_data:\n",
+    "    pit_df = pd.concat(all_pit_data, ignore_index=True)\n",
+    "else:\n",
+    "    pit_df = pd.DataFrame(columns=[\n",
+    "        'Race', 'Driver', 'LapNumber', 'Compound',\n",
+    "        'PitStopDuration', 'TimeLostVsMedian', 'LapTimeSec'\n",
+    "    ])\n",
+    "\n",
+    "pit_df['LapNumber'] = pd.to_numeric(pit_df['LapNumber'], errors='coerce')\n",
+    "pit_df = pit_df.dropna(subset=['Race', 'Driver', 'LapNumber'])\n",
+    "\n",
+    "print(pit_df.shape)\n",
+    "print(pit_df.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "d1c776bc-f210-4b52-afce-44c19d68217d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Empty DataFrame\n",
+      "Columns: [Race, Avg_Pit_Duration, Median_Pit_Duration, Avg_Time_Lost, Median_Time_Lost, Pit_Count]\n",
+      "Index: []\n"
+     ]
+    }
+   ],
+   "source": [
+    "if pit_df.empty:\n",
+    "    track_pit_stats = pd.DataFrame(columns=[\n",
+    "        'Race', 'Avg_Pit_Duration', 'Median_Pit_Duration',\n",
+    "        'Avg_Time_Lost', 'Median_Time_Lost', 'Pit_Count'\n",
+    "    ])\n",
+    "else:\n",
+    "    track_pit_stats = (\n",
+    "        pit_df.groupby('Race')\n",
+    "        .agg(\n",
+    "            Avg_Pit_Duration=('PitStopDuration', 'mean'),\n",
+    "            Median_Pit_Duration=('PitStopDuration', 'median'),\n",
+    "            Avg_Time_Lost=('TimeLostVsMedian', 'mean'),\n",
+    "            Median_Time_Lost=('TimeLostVsMedian', 'median'),\n",
+    "            Pit_Count=('PitStopDuration', 'count')\n",
+    "        )\n",
+    "        .reset_index()\n",
+    "        .sort_values('Median_Time_Lost', ascending=False)\n",
+    "    )\n",
+    "\n",
+    "print(track_pit_stats)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "b51c2a09-6376-45b4-8037-793fa39bc381",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Saved track_pit_stats to database.\n"
+     ]
+    }
+   ],
+   "source": [
+    "conn = sqlite3.connect(\"f1_data.db\")\n",
+    "track_pit_stats.to_sql(\"track_pit_stats\", conn, if_exists=\"replace\", index=False)\n",
+    "conn.close()\n",
+    "\n",
+    "print(\"Saved track_pit_stats to database.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "b87f942b-0cf0-473c-9005-e29a7e30ff77",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "No track pit stats available.\n"
+     ]
+    }
+   ],
+   "source": [
+    "if not track_pit_stats.empty:\n",
+    "    fig, ax = plt.subplots(figsize=(14, 7), facecolor='#111111')\n",
+    "    ax.set_facecolor('#111111')\n",
+    "\n",
+    "    races_sorted = track_pit_stats.sort_values('Median_Time_Lost')\n",
+    "    bars = ax.barh(\n",
+    "        races_sorted['Race'],\n",
+    "        races_sorted['Median_Time_Lost'],\n",
+    "        color='#E8002D',\n",
+    "        alpha=0.85\n",
+    "    )\n",
+    "\n",
+    "    for bar, val in zip(bars, races_sorted['Median_Time_Lost']):\n",
+    "        ax.text(val + 0.3, bar.get_y() + bar.get_height() / 2,\n",
+    "                f'{val:.1f}s', va='center', color='white', fontsize=8)\n",
+    "\n",
+    "    ax.set_title('Median Pit Stop Time Loss Per Track - 2024 F1 Season',\n",
+    "                 color='white', fontsize=14, pad=12)\n",
+    "    ax.set_xlabel('Median Time Lost vs Clean Lap (seconds)', color='white')\n",
+    "    ax.tick_params(colors='white')\n",
+    "\n",
+    "    for spine in ax.spines.values():\n",
+    "        spine.set_edgecolor('#444444')\n",
+    "\n",
+    "    ax.axvline(\n",
+    "        track_pit_stats['Median_Time_Lost'].median(),\n",
+    "        color='yellow', linestyle='--', linewidth=1.5, label='Season Median'\n",
+    "    )\n",
+    "\n",
+    "    ax.legend(facecolor='#222222', labelcolor='white')\n",
+    "    plt.tight_layout()\n",
+    "    plt.show()\n",
+    "else:\n",
+    "    print(\"No track pit stats available.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "6732c0c4-da4b-4eec-9204-464b86c3b997",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{}\n"
+     ]
+    }
+   ],
+   "source": [
+    "pit_cost_map = {}\n",
+    "if not track_pit_stats.empty:\n",
+    "    pit_cost_map = track_pit_stats.set_index('Race')['Median_Time_Lost'].to_dict()\n",
+    "\n",
+    "print(pit_cost_map)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "a58be0a8-12cf-486e-895f-1ef541de6746",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                     Race Compound  Baseline_Time  True_Deg_Rate  \\\n",
+      "0    Abu Dhabi Grand Prix     HARD      91.214713       0.030064   \n",
+      "1    Abu Dhabi Grand Prix   MEDIUM      97.303422      -0.369345   \n",
+      "2    Abu Dhabi Grand Prix     SOFT      92.812206       0.012817   \n",
+      "3   Australian Grand Prix     HARD      83.102380       0.216543   \n",
+      "4   Australian Grand Prix   MEDIUM      83.272411       0.288513   \n",
+      "5   Australian Grand Prix     SOFT      77.745964       2.267692   \n",
+      "6     Austrian Grand Prix     HARD      71.730520       0.117112   \n",
+      "7     Austrian Grand Prix   MEDIUM      71.694621       0.125512   \n",
+      "9   Azerbaijan Grand Prix     HARD     110.141517       0.062220   \n",
+      "10  Azerbaijan Grand Prix   MEDIUM     109.942205       0.155145   \n",
+      "11     Bahrain Grand Prix     HARD      97.519919       0.105614   \n",
+      "12     Bahrain Grand Prix     SOFT      98.478228       0.043539   \n",
+      "13     Belgian Grand Prix     HARD     110.018556       0.057150   \n",
+      "14     Belgian Grand Prix   MEDIUM     110.837549       0.067611   \n",
+      "15     Belgian Grand Prix     SOFT     110.914096       0.029013   \n",
+      "\n",
+      "    Optimal_Stint_Length  Earliest_Pit  Latest_Pit  Optimal_Pit  \n",
+      "0                   38.0            30          45           38  \n",
+      "1                   55.0            20          55           45  \n",
+      "2                   55.0            44          55           55  \n",
+      "3                   14.0            11          17           14  \n",
+      "4                   12.0             9          15           12  \n",
+      "5                    4.0             5           7            4  \n",
+      "6                   19.0            15          23           19  \n",
+      "7                   19.0            14          22           19  \n",
+      "9                   27.0            21          31           27  \n",
+      "10                  17.0            13          20           17  \n",
+      "11                  20.0            16          24           20  \n",
+      "12                  32.0            25          38           32  \n",
+      "13                  28.0            22          33           28  \n",
+      "14                  26.0            20          30           26  \n",
+      "15                  39.0            31          46           39  \n"
+     ]
+    }
+   ],
+   "source": [
+    "def compute_pit_windows(row):\n",
+    "    race = row['Race']\n",
+    "    deg_rate = row['True_Deg_Rate']\n",
+    "    pit_cost = pit_cost_map.get(race, 22.0)\n",
+    "\n",
+    "    if pd.isna(deg_rate) or deg_rate <= 0:\n",
+    "        return pd.Series({\n",
+    "            'Earliest_Pit': 20,\n",
+    "            'Latest_Pit': 55,\n",
+    "            'Optimal_Pit': 45\n",
+    "        })\n",
+    "\n",
+    "    opt = np.sqrt((2 * pit_cost) / deg_rate)\n",
+    "    opt = min(opt, 55)\n",
+    "\n",
+    "    window_half = max(3, opt * 0.20)\n",
+    "    earliest = max(5, int(opt - window_half))\n",
+    "    latest = min(55, int(opt + window_half))\n",
+    "    optimal = int(round(opt))\n",
+    "\n",
+    "    return pd.Series({\n",
+    "        'Earliest_Pit': earliest,\n",
+    "        'Latest_Pit': latest,\n",
+    "        'Optimal_Pit': optimal\n",
+    "    })\n",
+    "\n",
+    "pit_windows = deg_stats.copy()\n",
+    "\n",
+    "if not pit_windows.empty:\n",
+    "    pit_windows[['Earliest_Pit', 'Latest_Pit', 'Optimal_Pit']] = (\n",
+    "        pit_windows.apply(compute_pit_windows, axis=1)\n",
+    "    )\n",
+    "\n",
+    "print(pit_windows.head(15))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "f29d848a-5a0d-4cee-a254-713f07ddb8c0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Saved pit_windows to database.\n"
+     ]
+    }
+   ],
+   "source": [
+    "conn = sqlite3.connect(\"f1_data.db\")\n",
+    "pit_windows.to_sql(\"pit_windows\", conn, if_exists=\"replace\", index=False)\n",
+    "conn.close()\n",
+    "\n",
+    "print(\"Saved pit_windows to database.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "c227d1b2-a94d-4b22-94a8-74d81150e8e1",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAA9wAAAGGCAYAAACJ2omlAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvlHJYcgAAAAlwSFlzAAAPYQAAD2EBqD+naQAAQtNJREFUeJzt3XmcjXX/x/H3nNlMDIasYciSyhpKZmylchMJyTKZkmzJmsSdEkXoluJmSCGZyJJ9iJR9zzaS3TDGIMcwzD7n/P7wO+d2nBmzcM3BvJ6PxzwezrWdzzVzXcd5X9/v97rc/Pz8rAIAAAAAAHeVydUFAAAAAADwICJwAwAAAABgAAI3AAAAAAAGIHADAAAAAGAAAjcAAAAAAAYgcAMAAAAAYAACNwAAAAAABiBwAwAAAABgAAI3AAAAAAAGIHADuKdMmjRJZrPZ1WVo7969Wrp06V3d5uDBg2U2m1W6dOm7ut3sKF26tMxmswYPHnxfbRuukd7f1Gw2a9KkSS6q6sHiivOmQ4cOMpvNCggIyLH3BIDchsANwImvr6/ef/99/f7774qIiFBkZKS2bt2qTz/9VEWKFLnj7Tdr1uyBCmNms9nhJyoqSjt37tRnn32mggUL3nbdKlWqaPDgwZkO4dOnT5fZbFaFChWc5o0dO1Zms1kzZsxwmufr66uLFy9q+fLlmXofZN20adNkNpvv+oWajHTo0EE9evTI0fe8F5UtW1ajRo3S5s2bFRERoejoaB08eFA///yz3nzzTT300EOuLvGusQVl288///yjU6dOaeXKlXr99dddWpu3t7c6d+6sH3/8UXv37tXZs2f1559/6ttvv1WlSpXSXa9r167asmWLoqKi9Ndff2n8+PHy8/O7K9u2KVasmE6ePCmz2ay+ffve8b4CQGZ4uLoAAPeW8uXLa8GCBSpdurSWL1+uH3/8USkpKapdu7a6d++ujh07qmPHjtq5c2e236NZs2bq2LGjxowZ4zSvX79+Gjhw4J3sgkuEh4dr4sSJkiQ/Pz+98MIL6tWrlxo1aqTnnntOSUlJ+vLLLzVhwgQlJiba16tataoGDx6sTZs26cyZMxm+z8aNG9W6dWsFBgbq2LFjDvMCAwOVnJycZmtVvXr15O7urk2bNkmSzpw5oxIlSiglJeVOdhv/r0CBAmrevLmOHTumwMBAlStXTidPnsyR9+7QoYPKlCmjkJCQHHm/m5UoUUKpqak5/r63at++vcaPH6+UlBQtWbJEM2bMUHx8vIoWLap69epp3Lhxevnll9W2bVtXl3pXffvtt9q1a5dMJpPKlCmjzp07a8qUKSpZsqS++uqrDNefN2+eFi1apKSkpLtWU5kyZTRhwgTt2LFDoaGhioqKkr+/v7p06aKXX35Zr732mv1zyGbEiBHq3bu3Vq1apZCQEJUpU0Y9evTQ008/rRdffFFxcXHZ3vbNxowZI5OJtiYAOYvADcDOx8dHoaGhKlGihDp06KA1a9bY582aNUvfffedfvnlF/34448KDAzUxYsX73oNKSkp92UIPH/+vObPn29/PW3aNIWGhqpp06Zq1qyZFi9erNTU1DsOJ7Yvk4GBgZo5c6Z9euHChVWpUiWFhoYqKChIjz/+uA4dOmSfHxgYKOlGYLe5Ofjjzrz22mvy9vZW165dtWrVKnXq1EmfffaZq8tKU968eXX9+vW7sq174Rhq0KCBJk6cqEOHDun111/XuXPnHOZ/9dVX8vf316uvvprhtu7m7yYnbN++XYsWLbK/Dg0N1fbt29W3b19988036X7e2PbTYrHc9b/hP//8o4YNG+rAgQMO0xcsWKA//vhDw4cPV5MmTezTK1WqpJ49e2rlypUKCgqyT9+3b59mzZqlnj176j//+U+2tn2zl156Sc2bN9eIESP06aef3q3dBYAMcZkPgF1QUJAqVqyoKVOmOIRtm71792rkyJEqUqSI3nvvPfv0gIAAmc1mdejQQe+884527Nhh71bdvXt3p2107NhRkmNXbFurbFpjuG3TChUqpEmTJuno0aOKiIjQ7NmzVbRoUUlScHCwtm3bpqioKG3fvl3Nmzd3qr9Lly5auHChwsPDFR0drb/++kshISGGjalet26dpBtdXSXnMdyTJk3Sf//7X0nSsmXL7L+L23W3P378uKKiopxasQMDA2UymfT1118rISFB9evXd5gfEBCg+Ph4e8+EtMaL3jytWbNmWrdunb1756effip3d3enel588UX99ttv9uVGjx6tvHnzplm7j4+Phg4dqp07d+rcuXM6cuSIvvvuO5UvX95huV27djl1y37vvfdkNpsdLmpI0qBBg2Q2m+Xv7y/pRpfTwYMHa9u2bYqMjFRERIS2bdum0aNHp/s7vRuCgoK0ZcsW7d+/X2FhYWrfvn2aLWlLly7V3r17naanN363R48e2rhxoyIiInT69Gnt3r1bkyZNUp48eSTdOIcCAwNVpkwZh/PJdozZ7kVQtWpVLViwQKdOnbJftMmXL5+GDh2qNWvW6OjRozp37px27dqljz/+WD4+Ppna77TGcL/66quaM2eO9u/fr3Pnzuno0aOaPXu2nnjiCaf1bfVVrlxZ8+fPV0REhE6dOqWZM2faz+2MDB8+XNKN8/vWsG0TERGhCRMmOEyz/S38/f01c+ZMHT9+3N7LxM3NTQMGDNDy5ct16NAhRUdHa//+/fryyy+dujkbfd5kxdmzZ3X48GHlz59fDz/8sKT//Y0aNGiglStX6vTp0/rpp58kOY/hdnd3V1hYmCIjI1W5cmWHbb/++usym8365JNPblvD5cuXnQKxJB0+fFh///2303HQpk0bubu7a/LkyQ7Tly1bpoiICL322mvZ3rZNvnz5NG7cOM2YMUN//vnnbesHgLuNFm4Adi1btpQk/fDDD+ku89NPP2nUqFFq0aKFPv74Y4d577zzjooWLapZs2bp2rVrat26tUaPHq1ChQrZA8/QoUPVq1cv1atXzyGMHzlyJMP65s+fr8jISI0ePVrlypVTt27dNGfOHC1dulRvvPGG5syZo8TERHXr1k3ff/+9nn76aUVERNjXf/fdd7Vjxw798ccfunLlih5//HEFBQWpfv36CgwM1OXLl7P0+8qILUimdxO4WbNmKSkpSW+++ab+85//2H8HBw8evO12N23apHbt2qlSpUr2dQICAhQREaHjx49r9+7dCgwM1LRp0yTdGL9dtWpVbd68OVNdR5s0aaIuXbpo5syZmj17tpo1a6b33ntPMTExDt1UmzdvrpkzZ+rcuXMaP3684uLi1KZNGz3zzDNO23R3d9fPP/+sgIAALVu2zH6h4+2339Zzzz2nl156yb4vGzduVPv27eXj46P4+HhJN1oxU1NTVbduXXl6eio5OVmSVL9+fZ0+fdr+dx43bpyCgoI0d+5chYSEyGQyqVy5cmrUqFGG+51d1apVU7Vq1dS7d29JN86RV199VU2aNNGvv/6a7e2+//77Gjp0qMLCwjRjxgylpqaqdOnSatq0qR566CElJCSoe/fuGjhwoAoVKqR///vf9nUvXbpk/3epUqW0ePFiLVmyRMuWLbMHuxIlSigoKEhLlizR/PnzlZqaqoCAAPXp00fVqlXLdvfrt99+W5cuXdL333+vS5cuqWzZsgoODlZYWJgaN26sEydOOCxfokQJLV68WMuXL9fy5ctVrVo1BQcHy9fXV23atLnte5UuXVo1atTQ5s2bnYZYZEbevHm1fPlybdu2TZ999pn9HhVeXl7q3bu3lixZohUrViguLk61atVSUFCQ6tatq8aNG9uPQRsjzpus8vLyUqlSpZScnKwrV67Yp9esWVMtWrTQ7NmzNXfu3HTXT01NVdeuXbVhwwZNnz5dTZo0UUJCgipUqKCxY8dq9+7d+vzzz7NVm5ubm4oWLap//vnHYfpTTz2l1NRU7dq1y2mdnTt3qm3btvL19VVsbGyWt23z0UcfycPDQyNHjlS1atWyVT8AZBeBG4Dd448/rtjY2NuOPY2Pj9exY8f0xBNPOHW/LF++vJ599llFRUVJunGDr5UrV6p///6aPXu2IiMjtXLlSjVr1kz16tVzaq3MyI4dOzRkyBD7a6vVqt69e9vHadpq2bBhgzZt2qTg4GCNGDHCvnz9+vXtYwFtwsLCtHjxYgUFBdnHYGeHh4eHChUqJEkqWLCgXnrpJb311luKjY1VWFhYmuvs3LlTFSpU0Jtvvqk//vhDmzdvztR72QJ3YGCgPaQGBgba19+8ebPeeecdubm5yWq12sdv39yd/HYqV66sevXq2Vv7ZsyYYd+mLTiYTCaNHj1a165dU5MmTXThwgVJN/7mae1vx44dFRAQoClTpjgEw7CwMIWFhWn06NH2cLVx40YFBwerbt26+v333+Xh4aFnnnlG8+fPV/v27VW7dm1t3bpVefLkUe3atbVgwQL79po3b65ff/1VvXr1ytS+3g1BQUG6du2alixZIulGz4Zz586pU6dOdxS4mzdvrr///ludOnVymH5zV/X58+frjTfeUJ48edI9n8qWLavevXsrNDTUYfqpU6dUtWpVh27H3333nYYOHar3339fTz31VLZaA9u1a+d0ns2bN0/r169Xz549NWjQIId55cuXV5cuXbR48WL7NFvwq1ixoo4ePZrue9laNMPDw53m+fj4OLXU33rxq3Dhwho7dqy++OILh+mJiYl64oknlJCQYJ82a9Ys7dixQ998842aN2/uUK9kzHmTkXz58qlQoUIymUwqXbq0BgwYoCJFimjx4sUOtT/++ON6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",
+      "text/plain": [
+       "<Figure size 1000x400 with 1 Axes>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sample_race = 'Australian Grand Prix'\n",
+    "sample = pit_windows[pit_windows['Race'] == sample_race].copy()\n",
+    "\n",
+    "compound_colors = {\n",
+    "    'SOFT': '#FF3333',\n",
+    "    'MEDIUM': '#FFD700',\n",
+    "    'HARD': '#AAAAAA',\n",
+    "    'INTERMEDIATE': '#39B54A',\n",
+    "    'WET': '#0067FF'\n",
+    "}\n",
+    "\n",
+    "if not sample.empty:\n",
+    "    fig, ax = plt.subplots(figsize=(10, 4), facecolor='#111111')\n",
+    "    ax.set_facecolor('#111111')\n",
+    "\n",
+    "    for i, (_, row) in enumerate(sample.iterrows()):\n",
+    "        col = compound_colors.get(row['Compound'], 'white')\n",
+    "\n",
+    "        ax.barh(\n",
+    "            i,\n",
+    "            row['Latest_Pit'] - row['Earliest_Pit'],\n",
+    "            left=row['Earliest_Pit'],\n",
+    "            height=0.5,\n",
+    "            color=col,\n",
+    "            alpha=0.4\n",
+    "        )\n",
+    "\n",
+    "        ax.scatter(row['Optimal_Pit'], i, color=col, s=120, zorder=5)\n",
+    "        ax.text(row['Latest_Pit'] + 0.5, i, row['Compound'],\n",
+    "                va='center', color=col, fontsize=9)\n",
+    "\n",
+    "    ax.set_yticks(range(len(sample)))\n",
+    "    ax.set_yticklabels(['' for _ in range(len(sample))])\n",
+    "    ax.set_xlabel('Lap Number', color='white')\n",
+    "    ax.set_title(f'Optimal Pit Windows - {sample_race} 2024',\n",
+    "                 color='white', fontsize=13)\n",
+    "    ax.tick_params(colors='white')\n",
+    "\n",
+    "    for spine in ax.spines.values():\n",
+    "        spine.set_edgecolor('#444444')\n",
+    "\n",
+    "    plt.tight_layout()\n",
+    "    plt.show()\n",
+    "else:\n",
+    "    print(f\"No pit window data found for {sample_race}.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "a03e3810-3c57-4fe4-a4ab-700c8f9eee2d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Empty DataFrame\n",
+      "Columns: [Race, Driver, LapNumber, PitStopDuration, TimeLostVsMedian]\n",
+      "Index: []\n"
+     ]
+    }
+   ],
+   "source": [
+    "pit_lookup = pit_df[['Race', 'Driver', 'LapNumber', 'PitStopDuration', 'TimeLostVsMedian']].copy()\n",
+    "\n",
+    "pit_lookup['LapNumber'] = pd.to_numeric(pit_lookup['LapNumber'], errors='coerce')\n",
+    "laps_2024['LapNumber'] = pd.to_numeric(laps_2024['LapNumber'], errors='coerce')\n",
+    "\n",
+    "print(pit_lookup.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "2a131919-a047-4576-a9e0-c9055effe9ea",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(25407, 13)\n",
+      "  Driver  LapNumber Compound  TyreLife  LapTime  Stint   LapStartTime  Year  \\\n",
+      "0    VER        1.0     SOFT       4.0   97.284    1.0  3599911000000  2024   \n",
+      "1    VER        2.0     SOFT       5.0   96.296    1.0  3697489000000  2024   \n",
+      "2    VER        3.0     SOFT       6.0   96.753    1.0  3793785000000  2024   \n",
+      "3    VER        4.0     SOFT       7.0   96.647    1.0  3890538000000  2024   \n",
+      "4    VER        5.0     SOFT       8.0   97.173    1.0  3987185000000  2024   \n",
+      "\n",
+      "                 Race  CorrectedLapTime PitStopDuration TimeLostVsMedian  \\\n",
+      "0  Bahrain Grand Prix         97.341895             NaN              NaN   \n",
+      "1  Bahrain Grand Prix         96.411789             NaN              NaN   \n",
+      "2  Bahrain Grand Prix         96.926684             NaN              NaN   \n",
+      "3  Bahrain Grand Prix         96.878579             NaN              NaN   \n",
+      "4  Bahrain Grand Prix         97.462474             NaN              NaN   \n",
+      "\n",
+      "   IsPitLap  \n",
+      "0     False  \n",
+      "1     False  \n",
+      "2     False  \n",
+      "3     False  \n",
+      "4     False  \n"
+     ]
+    }
+   ],
+   "source": [
+    "merged = laps_2024.merge(\n",
+    "    pit_lookup,\n",
+    "    on=['Race', 'Driver', 'LapNumber'],\n",
+    "    how='left'\n",
+    ")\n",
+    "\n",
+    "merged['IsPitLap'] = merged['PitStopDuration'].notna()\n",
+    "\n",
+    "print(merged.shape)\n",
+    "print(merged.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "5f4e0b77-f89f-4bbb-ae31-956005652a6f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(25407, 17)\n",
+      "  Driver  LapNumber Compound  TyreLife  LapTime  Stint   LapStartTime  Year  \\\n",
+      "0    VER        1.0     SOFT       4.0   97.284    1.0  3599911000000  2024   \n",
+      "1    VER        2.0     SOFT       5.0   96.296    1.0  3697489000000  2024   \n",
+      "2    VER        3.0     SOFT       6.0   96.753    1.0  3793785000000  2024   \n",
+      "3    VER        4.0     SOFT       7.0   96.647    1.0  3890538000000  2024   \n",
+      "4    VER        5.0     SOFT       8.0   97.173    1.0  3987185000000  2024   \n",
+      "\n",
+      "                 Race  CorrectedLapTime PitStopDuration TimeLostVsMedian  \\\n",
+      "0  Bahrain Grand Prix         97.341895             NaN              NaN   \n",
+      "1  Bahrain Grand Prix         96.411789             NaN              NaN   \n",
+      "2  Bahrain Grand Prix         96.926684             NaN              NaN   \n",
+      "3  Bahrain Grand Prix         96.878579             NaN              NaN   \n",
+      "4  Bahrain Grand Prix         97.462474             NaN              NaN   \n",
+      "\n",
+      "   IsPitLap  Optimal_Pit  Earliest_Pit  Latest_Pit  InPitWindow  \n",
+      "0     False         32.0          25.0        38.0        False  \n",
+      "1     False         32.0          25.0        38.0        False  \n",
+      "2     False         32.0          25.0        38.0        False  \n",
+      "3     False         32.0          25.0        38.0        False  \n",
+      "4     False         32.0          25.0        38.0        False  \n"
+     ]
+    }
+   ],
+   "source": [
+    "merged = merged.merge(\n",
+    "    pit_windows[['Race', 'Compound', 'Optimal_Pit', 'Earliest_Pit', 'Latest_Pit']],\n",
+    "    on=['Race', 'Compound'],\n",
+    "    how='left'\n",
+    ")\n",
+    "\n",
+    "merged['InPitWindow'] = merged['LapNumber'].between(\n",
+    "    merged['Earliest_Pit'],\n",
+    "    merged['Latest_Pit']\n",
+    ")\n",
+    "\n",
+    "merged['InPitWindow'] = merged['InPitWindow'].fillna(False)\n",
+    "\n",
+    "print(merged.shape)\n",
+    "print(merged.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "8daf2117-ecef-4114-aced-5dfe6c928bb8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Saved laps_with_pit_analysis to database.\n"
+     ]
+    }
+   ],
+   "source": [
+    "conn = sqlite3.connect(\"f1_data.db\")\n",
+    "merged.to_sql(\"laps_with_pit_analysis\", conn, if_exists=\"replace\", index=False)\n",
+    "conn.close()\n",
+    "\n",
+    "print(\"Saved laps_with_pit_analysis to database.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "62d940b2-cd7f-4aa0-8a48-626d13d2bfae",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Merged dataset shape : (25407, 17)\n",
+      "Pit laps flagged     : 0\n",
+      "Laps in pit window   : 9170\n",
+      "Empty DataFrame\n",
+      "Columns: [Race, Driver, LapNumber, Compound, LapTime, PitStopDuration, TimeLostVsMedian, Optimal_Pit, InPitWindow]\n",
+      "Index: []\n"
+     ]
+    }
+   ],
+   "source": [
+    "pit_only = merged[merged['IsPitLap']]\n",
+    "\n",
+    "print(\"Merged dataset shape :\", merged.shape)\n",
+    "print(\"Pit laps flagged     :\", merged['IsPitLap'].sum())\n",
+    "print(\"Laps in pit window   :\", merged['InPitWindow'].sum())\n",
+    "\n",
+    "print(pit_only[[\n",
+    "    'Race', 'Driver', 'LapNumber', 'Compound',\n",
+    "    'LapTime', 'PitStopDuration', 'TimeLostVsMedian',\n",
+    "    'Optimal_Pit', 'InPitWindow'\n",
+    "]].head(10))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "94746ca1-4249-47c5-929d-6bad18a01aa6",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "No pit laps found.\n"
+     ]
+    }
+   ],
+   "source": [
+    "if not pit_only.empty:\n",
+    "    window_compliance = (\n",
+    "        pit_only.groupby('Race')['InPitWindow']\n",
+    "        .mean()\n",
+    "        .reset_index()\n",
+    "        .rename(columns={'InPitWindow': 'PctPitsInWindow'})\n",
+    "        .sort_values('PctPitsInWindow', ascending=False)\n",
+    "    )\n",
+    "\n",
+    "    print(window_compliance)\n",
+    "else:\n",
+    "    print(\"No pit laps found.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "id": "4bb7edf8-cafc-4bff-bcdb-4d93dc090fda",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "No compliance chart generated.\n"
+     ]
+    }
+   ],
+   "source": [
+    "if not pit_only.empty:\n",
+    "    fig, ax = plt.subplots(figsize=(13, 7), facecolor='#111111')\n",
+    "    ax.set_facecolor('#111111')\n",
+    "\n",
+    "    bars = ax.barh(\n",
+    "        window_compliance['Race'],\n",
+    "        window_compliance['PctPitsInWindow'] * 100,\n",
+    "        color='#00A8FF',\n",
+    "        alpha=0.85\n",
+    "    )\n",
+    "\n",
+    "    for bar, val in zip(bars, window_compliance['PctPitsInWindow'] * 100):\n",
+    "        ax.text(val + 0.5, bar.get_y() + bar.get_height() / 2,\n",
+    "                f'{val:.0f}%', va='center', color='white', fontsize=8)\n",
+    "\n",
+    "    ax.set_title('% of Pit Stops Made Inside Optimal Window - 2024 Season',\n",
+    "                 color='white', fontsize=13, pad=12)\n",
+    "    ax.set_xlabel('% of Pit Stops in Optimal Window', color='white')\n",
+    "    ax.axvline(50, color='yellow', linestyle='--', linewidth=1, label='50% line')\n",
+    "    ax.tick_params(colors='white')\n",
+    "\n",
+    "    for spine in ax.spines.values():\n",
+    "        spine.set_edgecolor('#444444')\n",
+    "\n",
+    "    ax.legend(facecolor='#222222', labelcolor='white')\n",
+    "    plt.tight_layout()\n",
+    "    plt.show()\n",
+    "else:\n",
+    "    print(\"No compliance chart generated.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "ab9537f8-8283-4848-a4a0-d2bf8da02e4c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "=== SECTION 3 COMPLETE ===\n",
+      "Tables saved to f1_data.db:\n",
+      "degradation_stats\n",
+      "track_pit_stats\n",
+      "pit_windows\n",
+      "laps_with_pit_analysis\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"=== SECTION 3 COMPLETE ===\")\n",
+    "print(\"Tables saved to f1_data.db:\")\n",
+    "print(\"degradation_stats\")\n",
+    "print(\"track_pit_stats\")\n",
+    "print(\"pit_windows\")\n",
+    "print(\"laps_with_pit_analysis\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e249d26b-c0e8-45de-b0a4-4dc0713204b3",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [conda env:base] *",
+   "language": "python",
+   "name": "conda-base-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
